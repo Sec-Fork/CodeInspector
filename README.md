@@ -8,6 +8,8 @@
 
 简化并重写`GadgetInspector`尝试实现一个**自动Java代码审计工具**
 
+目前是半成品，基本架构已经搭起来了，必要的类和方法已经实现
+
 基本原理是从`Java`的字节码角度入手，使用`ASM`技术解析，模拟JVM的`Operand Stack`和`Local Variables Array`实现数据流分析
 
 最终目标：通过输入一个`SpringBoot`的`Jar`，直接生成漏洞报告
