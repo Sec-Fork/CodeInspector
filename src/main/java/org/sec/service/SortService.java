@@ -6,6 +6,10 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 
+/**
+ * 在DataFlow分析中需要拓扑逆排序
+ * 参考我在先知社区的文章：https://xz.aliyun.com/t/10363#toc-52
+ */
 public class SortService {
     private static final Logger logger = Logger.getLogger(SortService.class);
 

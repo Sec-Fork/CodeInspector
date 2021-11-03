@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * 最基本的信息分析
+ */
 public class DiscoveryService {
     private static final Logger logger = Logger.getLogger(DiscoveryService.class);
 

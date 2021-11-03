@@ -16,7 +16,14 @@ import static guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT;
 import static guru.nidi.graphviz.model.Factory.graph;
 import static guru.nidi.graphviz.model.Factory.node;
 
+/**
+ * 绘制调用图的Util
+ */
 public class DrawUtil {
+    /**
+     * 根据callGraph画出图
+     * @param targetCalls callGraphs
+     */
     public static void drawCallGraph(Set<CallGraph> targetCalls) {
         try {
             List<Node> results = new ArrayList<>();
@@ -37,6 +44,11 @@ public class DrawUtil {
         }
     }
 
+    /**
+     * 讲类名的/替换为.
+     * @param fullName 完整类名
+     * @return 新的类名
+     */
     private static String getClassName(String fullName) {
         String[] strings = fullName.split("/");
         return strings[strings.length - 1];

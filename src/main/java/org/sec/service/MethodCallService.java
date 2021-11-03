@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 分析出方法内的方法调用
+ */
 public class MethodCallService {
     private static final Logger logger = Logger.getLogger(MethodCallService.class);
 

@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 尝试实现简单的SSRF扫描
+ */
 public class SSRFService {
     private static final Logger logger = Logger.getLogger(SSRFService.class);
 

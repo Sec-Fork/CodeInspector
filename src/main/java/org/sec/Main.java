@@ -14,6 +14,36 @@ import org.sec.service.*;
 
 import java.util.*;
 
+//                          _ooOoo_
+//                         o8888888o
+//                         88" . "88
+//                         (| -_- |)
+//                          O\ = /O
+//                      ____/`---'\____
+//                    .   ' \\| |// `.
+//                     / \\||| : |||// \
+//                   / _||||| -:- |||||- \
+//                     | | \\\ - /// | |
+//                   | \_| ''\---/'' | |
+//                    \ .-\__ `-` ___/-. /
+//                 ___`. .' /--.--\ `. . __
+//              ."" '< `.___\_<|>_/___.' >'"".
+//             | | : `- \`.;`\ _ /`;.`/ - ` : | |
+//               \ \ `-. \_ __\ /__ _/ .-` / /
+//       ======`-.____`-.___\_____/___.-`____.-'======
+//                          `=---='
+//
+//       .............................................
+//                佛祖保佑           永无BUG
+//
+//                写字楼里写字间，写字间里程序员；
+//                程序人员写程序，又拿程序换酒钱。
+//                酒醒只在网上坐，酒醉还来网下眠；
+//                酒醉酒醒日复日，网上网下年复年。
+//                但愿老死电脑间，不愿鞠躬老板前；
+//                奔驰宝马贵者趣，公交自行程序员。
+//                别人笑我忒疯癫，我笑自己命太贱；
+//                不见满街漂亮妹，哪个归得程序员？
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);
     // 所有类
@@ -36,14 +66,18 @@ public class Main {
     private static final Map<MethodReference.Handle, Set<CallGraph>> graphCallMap = new HashMap<>();
 
     public static void main(String[] args) {
+        // 打印Logo
         Logo.PrintLogo();
         logger.info("start code inspector");
+        // 使用JCommander处理命令参数
         Command command = new Command();
         JCommander jc = JCommander.newBuilder().addObject(command).build();
         jc.parse(args);
         if (command.help) {
             jc.usage();
         }
+        // 暂时只处理输入SpringBoot的Jar包情况
+        // 其实Tomcat的War包情况类似
         if (command.boots != null && command.boots.size() != 0) {
             start(command.boots, command.packageName);
         }
@@ -61,6 +95,7 @@ public class Main {
         String finalPackageName = packageName.replace(".", "/");
         // 获取全部controller
         List<SpringController> controllers = new ArrayList<>();
+        // 根据SpringMVC的规则得到相关信息
         SpringService.start(classFileList, finalPackageName, controllers, classMap, methodMap);
         // 得到方法中的方法调用
         MethodCallService.start(classFileList, methodCalls, classFileByName);
@@ -72,12 +107,12 @@ public class Main {
         // 根据已有条件得到方法调用关系
         CallGraphService.start(inheritanceMap, discoveredCalls, sortedMethods, classFileByName,
                 classMap, dataFlow, graphCallMap, methodMap);
+        // 保存到本地观察
         DataUtil.SaveCallGraphs(discoveredCalls);
-        Map<MethodReference.Handle, Set<MethodReference.Handle>> methodImplMap = InheritanceUtil
-                .getAllMethodImplementations(inheritanceMap, methodMap);
+        // SSRF尝试检测
         SSRFService.start(classFileByName, controllers, inheritanceMap,
                 dataFlow, graphCallMap, methodMap);
         // 画出指定package的调用图
-        DrawService.start(discoveredCalls, finalPackageName, classMap, methodImplMap);
+        DrawService.start(discoveredCalls, finalPackageName, classMap);
     }
 }

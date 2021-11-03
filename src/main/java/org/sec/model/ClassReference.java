@@ -4,17 +4,32 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * 类对象封装
+ */
 public class ClassReference {
+    // 类名
     private final String name;
+    // 父类名
     private final String superClass;
+    // 实现的接口名
     private final List<String> interfaces;
+    // 是否是接口
     private final boolean isInterface;
+    // 拥有哪些属性
     private final List<Member> members;
+    // 有哪些注解
     private final Set<String> annotations;
 
+    /**
+     * 属性封装
+     */
     public static class Member {
+        // 属性
         private final String name;
+        // 属性描述符(public static等)
         private final int modifiers;
+        // 与本类的关联
         private final Handle type;
 
         public Member(String name, int modifiers, Handle type) {
@@ -74,7 +89,11 @@ public class ClassReference {
         return annotations;
     }
 
+    /**
+     * 类名的封装
+     */
     public static class Handle {
+        // 类名
         private final String name;
 
         public Handle(String name) {
@@ -85,6 +104,11 @@ public class ClassReference {
             return name;
         }
 
+        /**
+         * 两个类名相等的条件是handle.name一致
+         * @param o 对象
+         * @return 是否相等
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -93,6 +117,10 @@ public class ClassReference {
             return Objects.equals(name, handle.name);
         }
 
+        /**
+         * 配合equals
+         * @return hashcode
+         */
         @Override
         public int hashCode() {
             return name != null ? name.hashCode() : 0;

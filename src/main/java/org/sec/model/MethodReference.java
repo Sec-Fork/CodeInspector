@@ -2,10 +2,17 @@ package org.sec.model;
 
 import java.util.Objects;
 
+/**
+ * 方法对象封装
+ */
 public class MethodReference {
+    // 类名关联
     private final ClassReference.Handle classReference;
+    // 方法名
     private final String name;
+    // 方法描述符
     private final String desc;
+    // 是否为静态
     private final boolean isStatic;
 
     public MethodReference(ClassReference.Handle classReference,
@@ -36,9 +43,15 @@ public class MethodReference {
         return new Handle(classReference, name, desc);
     }
 
+    /**
+     * 方法名封装
+     */
     public static class Handle {
+        // 类对象关联
         private final ClassReference.Handle classReference;
+        // 方法名
         private final String name;
+        // 方法描述
         private final String desc;
 
         public Handle(ClassReference.Handle classReference, String name, String desc) {
@@ -59,6 +72,11 @@ public class MethodReference {
             return desc;
         }
 
+        /**
+         * 三个条件一致说明相等
+         * @param o 对象
+         * @return 是否相等
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -71,6 +89,10 @@ public class MethodReference {
             return Objects.equals(desc, handle.desc);
         }
 
+        /**
+         * 配合equals
+         * @return hashcode
+         */
         @Override
         public int hashCode() {
             int result = classReference != null ? classReference.hashCode() : 0;

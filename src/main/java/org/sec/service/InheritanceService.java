@@ -9,6 +9,9 @@ import org.sec.model.MethodReference;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 根据最基本的信息分析出继承关系
+ */
 public class InheritanceService {
     private static final Logger logger = Logger.getLogger(InheritanceService.class);
 

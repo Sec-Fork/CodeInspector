@@ -13,6 +13,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * SpringMVC分析
+ * 得到Controller，Mapping，Params的信息
+ */
 public class SpringService {
     private static final Logger logger = Logger.getLogger(SpringService.class);
 

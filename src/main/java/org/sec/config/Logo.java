@@ -1,5 +1,8 @@
 package org.sec.config;
 
+/**
+ * 打印Logo
+ */
 public class Logo {
     public static void PrintLogo() {
         String logo = "   _____               ____        \n" +

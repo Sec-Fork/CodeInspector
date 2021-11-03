@@ -9,10 +9,18 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 保存运行数据相关的Util
+ */
 public class DataUtil {
     private static final String DataFlowFile = "dataflow.dat";
     private static final String CallGraphFile = "callgraph.dat";
 
+    /**
+     * 保存DataFlow
+     * @param dataFlow dataFlow
+     * @param methodMap methodMap
+     */
     public static void SaveDataFlows(Map<MethodReference.Handle, Set<Integer>> dataFlow,
                                      Map<MethodReference.Handle, MethodReference> methodMap) {
         try {
@@ -43,6 +51,10 @@ public class DataUtil {
         }
     }
 
+    /**
+     * 保存CallGraph
+     * @param discoveredCalls discoveredCalls
+     */
     public static void SaveCallGraphs(Set<CallGraph> discoveredCalls) {
         try {
             Path filePath = Paths.get(CallGraphFile);

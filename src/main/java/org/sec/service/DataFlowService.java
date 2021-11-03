@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 参考GadgetInspector中的DataFlow
+ * 分析每个方法返回值和入参的关系
+ */
 public class DataFlowService {
     private static final Logger logger = Logger.getLogger(DataFlowService.class);
 

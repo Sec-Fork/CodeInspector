@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+/**
+ * 参考GadgetInspector中的实现
+ * 得到每个方法的调用图（CallGraph）
+ */
 public class CallGraphService {
     private static final Logger logger = Logger.getLogger(CallGraphService.class);
 

@@ -2,7 +2,6 @@ package org.sec.service;
 
 import org.sec.core.CallGraph;
 import org.sec.model.ClassReference;
-import org.sec.model.MethodReference;
 import org.sec.util.DrawUtil;
 
 import java.util.HashSet;
@@ -11,8 +10,7 @@ import java.util.Set;
 
 public class DrawService {
     public static void start(Set<CallGraph> discoveredCalls, String finalPackageName,
-                             Map<ClassReference.Handle, ClassReference> classMap,
-                             Map<MethodReference.Handle, Set<MethodReference.Handle>> methodImplMap) {
+                             Map<ClassReference.Handle, ClassReference> classMap) {
         Set<CallGraph> targetCallGraphs = new HashSet<>();
         for (CallGraph callGraph : discoveredCalls) {
             ClassReference callerClass = classMap.get(callGraph.getCallerMethod().getClassReference());

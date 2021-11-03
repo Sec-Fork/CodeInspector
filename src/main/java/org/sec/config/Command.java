@@ -4,6 +4,9 @@ import com.beust.jcommander.Parameter;
 
 import java.util.List;
 
+/**
+ * 项目本身的一些参数
+ */
 public class Command {
     @Parameter(names = {"-h", "--help"}, description = "Help Info", help = true)
     public boolean help;
