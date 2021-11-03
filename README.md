@@ -14,6 +14,12 @@
 
 最终目标：通过输入一个`SpringBoot`的`Jar`，直接生成漏洞报告
 
+参考先知社区文章：
+
+https://xz.aliyun.com/t/10433
+
+https://xz.aliyun.com/t/10363
+
 ## 原理
 
 JVM在每次方法调用均会创建一个对应的Frame，方法执行完毕或者异常终止，Frame被销毁
