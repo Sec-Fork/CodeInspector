@@ -14,12 +14,6 @@
 
 最终目标：通过输入一个`SpringBoot`的`Jar`，直接生成漏洞报告，得到从可控参数的输入点到漏洞的触发点完整信息
 
-参考先知社区文章：
-
-https://xz.aliyun.com/t/10433
-
-https://xz.aliyun.com/t/10363
-
 ## 原理
 
 JVM在每次方法调用均会创建一个对应的Frame，方法执行完毕或者异常终止，Frame被销毁
@@ -30,11 +24,13 @@ JVM在每次方法调用均会创建一个对应的Frame，方法执行完毕或
 
 JVM把操作数栈作为它的**工作区**——大多数指令都要从这里弹出数据，执行运算，然后把结果压回操作数栈
 
-参考代码中的`core/CoreMethodAdapter`，该类构造了`Operand Stack`和`Local Variables Array`并结合ASM技术实现数据流分析
+参考代码中的`core/CoreMethodAdapter`，该类构造了`Operand Stack`和`Local Variables Array`
+
+在用ASM技术解析class文件的时候，模拟他们在JVM中执行的过程，实现数据流分析
 
 ## 进度
 
-目前仅尝试实现了一种简单的SSRF，但可以做到参数可控性判断和数据流追踪分析，参考已有代码可以实现其他的漏洞检测
+目前仅尝试实现了一种简单的SSRF，可以做到参数可控性判断和数据流分析
 
 ## 使用
 
@@ -48,3 +44,13 @@ JVM把操作数栈作为它的**工作区**——大多数指令都要从这里�
 
 - boot：指定SpringBoot的Jar包路径
 - pack：指定项目的包名，将会分析启动的SpringMVC路径映射，生成自动审计的入口
+
+## 关于
+
+主要原理参考GadgetInspector： https://github.com/JackOfMostTrades/gadgetinspector
+
+GadgetInspector大概原理分析：https://xz.aliyun.com/t/10363
+
+该项目实现SSRF的简单分析：https://xz.aliyun.com/t/10433
+
+
