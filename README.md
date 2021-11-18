@@ -6,7 +6,7 @@
 
 ## 简介
 
-简化并重写`GadgetInspector`尝试实现一个**自动Java代码审计工具**
+简化并重写`GadgetInspector`实现一个针对于`SpringBoot`的**自动Java代码审计工具**
 
 基本原理是从`Java`的字节码角度入手，使用`ASM`技术解析，模拟JVM的`Operand Stack`和`Local Variables Array`
 
@@ -28,11 +28,30 @@ JVM把操作数栈作为它的**工作区**——大多数指令都要从这里�
 
 在用ASM技术解析class文件的时候，模拟他们在JVM中执行的过程，实现数据流分析
 
+原版数据流分析不支持调用链包含接口的情况，我使用一些特殊的手段做到了跨越接口抽象方法的数据流分析
+
 ## 进度
 
-目前仅尝试实现了一种简单的SSRF，可以做到参数可控性判断和数据流分析
+### 解析可控参数
 
-可以输出该漏洞的调用链
+针对SpringMVC解析暂时只考虑这一种（其他的方式做起来不难）
+
+```java
+@Controller
+public class TestController {
+    @RequestMapping(path = "/test")
+    @ResponseBody
+    public String test(@RequestParam(name = "test") String test) {
+        // 其中test认为是可控参数
+    }
+}
+```
+
+### SSRF
+
+目前仅尝试实现了一种简单的SSRF，可以做到参数可控性判断和数据流分析，判断根据为是否能匹配到JDK原生的`HttpURLConnection`请求
+
+检测结果如下（输出漏洞信息和调用链）
 
 ```text
 ---------------------------

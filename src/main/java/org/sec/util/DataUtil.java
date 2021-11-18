@@ -12,6 +12,7 @@ import java.util.Set;
 /**
  * 保存运行数据相关的Util
  */
+@SuppressWarnings("all")
 public class DataUtil {
     private static final String DataFlowFile = "dataflow.dat";
     private static final String TargetDataFlowFile = "target-dataflow.dat";
@@ -24,7 +25,6 @@ public class DataUtil {
      * @param methodMap methodMap
      * @param packageName packageName
      */
-    @SuppressWarnings("all")
     public static void SaveDataFlows(Map<MethodReference.Handle, Set<Integer>> dataFlow,
                                      Map<MethodReference.Handle, MethodReference> methodMap,
                                      String packageName) {

@@ -22,4 +22,7 @@ public class Command {
 
     @Parameter(names = {"--draw"}, description = "Draw Call Graph Picture")
     public boolean drawCallGraph;
+
+    @Parameter(names = {"--debug"}, description = "Debug")
+    public boolean debug;
 }

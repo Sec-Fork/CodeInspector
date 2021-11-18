@@ -3,8 +3,10 @@ package org.sec;
 import com.beust.jcommander.JCommander;
 import org.sec.config.Command;
 import org.sec.config.Logo;
+import org.sec.core.InheritanceUtil;
 import org.sec.model.*;
 import org.sec.util.DataUtil;
+import org.sec.util.FileUtil;
 import org.sec.util.OutputUtil;
 import org.sec.util.RtUtil;
 import org.apache.log4j.Logger;
@@ -64,6 +66,8 @@ public class Main {
     private static final Map<String, ClassFile> classFileByName = new HashMap<>();
     // 方法名->方法调用关系
     private static final Map<MethodReference.Handle, Set<CallGraph>> graphCallMap = new HashMap<>();
+    // 最终结果
+    private static final List<ResultInfo> resultInfos = new ArrayList<>();
 
     public static void main(String[] args) {
         // 打印Logo
@@ -107,16 +111,25 @@ public class Main {
         List<MethodReference.Handle> sortedMethods = SortService.start(methodCalls);
         // 分析方法返回值与哪些参数有关
         DataFlowService.start(inheritanceMap, sortedMethods, classFileByName, classMap, dataFlow);
-        DataUtil.SaveDataFlows(dataFlow, methodMap, finalPackageName);
+        // 同步DataFlow信息到接口
+        DataFlowService.updateInterfaceDataFlow(discoveredMethods, classMap, dataFlow, finalPackageName);
+        DataFlowService.start(inheritanceMap, sortedMethods, classFileByName, classMap, dataFlow);
+        // 保存到本地观察
+        if (command.debug) {
+            DataUtil.SaveDataFlows(dataFlow, methodMap, finalPackageName);
+        }
         // 根据已有条件得到方法调用关系
         CallGraphService.start(inheritanceMap, discoveredCalls, sortedMethods, classFileByName,
                 classMap, dataFlow, graphCallMap, methodMap);
         // 保存到本地观察
-        DataUtil.SaveCallGraphs(discoveredCalls, finalPackageName);
+        if (command.debug) {
+            DataUtil.SaveCallGraphs(discoveredCalls, finalPackageName);
+        }
         // SSRF检测
         SSRFService.start(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
-        List<ResultInfo> results = SSRFService.getResults();
-        OutputUtil.doOutput(results);
+        resultInfos.addAll(SSRFService.getResults());
+        //
+        OutputUtil.doOutput(resultInfos);
         if (draw) {
             DrawService.start(discoveredCalls, finalPackageName, classMap);
         }
