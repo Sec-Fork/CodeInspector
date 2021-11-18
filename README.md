@@ -36,6 +36,18 @@ JVM把操作数栈作为它的**工作区**——大多数指令都要从这里�
 
 目前仅尝试实现了一种简单的SSRF，但可以做到参数可控性判断和数据流追踪分析，参考已有代码可以实现其他的漏洞检测
 
+可以输出该漏洞的调用链
+
+```text
+---------------------------
+Vuln Name: SSRF
+Risk: High Level
+Chains: 
+	org/sec/cidemo/web/SSRFController.ssrf1
+	org/sec/cidemo/service/SSRFService.ssrf1
+	org/sec/cidemo/service/impl/SSRFServiceImpl.ssrf1
+```
+
 ## 使用
 
 参考靶机SpringBoot项目：https://github.com/EmYiQing/CIDemo

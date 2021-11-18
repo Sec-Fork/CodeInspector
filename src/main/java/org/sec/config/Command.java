@@ -19,4 +19,7 @@ public class Command {
 
     @Parameter(names = {"-p", "--pack"}, description = "SpringBoot Package Name")
     public String packageName;
+
+    @Parameter(names = {"--draw"}, description = "Draw Call Graph Picture")
+    public boolean drawCallGraph;
 }

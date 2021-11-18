@@ -25,13 +25,14 @@ public class SSRFService {
     private static Map<String, ClassFile> classFileMap;
     private static InheritanceMap localInheritanceMap;
     private static Map<MethodReference.Handle, Set<Integer>> localDataFlow;
+    private static final List<String> tempChain = new ArrayList<>();
+    private static final List<ResultInfo> results = new ArrayList<>();
 
     public static void start(Map<String, ClassFile> classFileByName,
                              List<SpringController> controllers,
                              InheritanceMap inheritanceMap,
                              Map<MethodReference.Handle, Set<Integer>> dataFlow,
-                             Map<MethodReference.Handle, Set<CallGraph>> discoveredCalls,
-                             Map<MethodReference.Handle, MethodReference> methodMap) {
+                             Map<MethodReference.Handle, Set<CallGraph>> discoveredCalls) {
         allCalls = discoveredCalls;
         classFileMap = classFileByName;
         localInheritanceMap = inheritanceMap;
@@ -58,6 +59,7 @@ public class SSRFService {
                 if (calls == null || calls.size() == 0) {
                     continue;
                 }
+                tempChain.add(methodReference.getClassReference().getName() + "." + methodReference.getName());
                 // mapping method中的call
                 for (CallGraph callGraph : calls) {
                     int callerIndex = callGraph.getCallerArgIndex();
@@ -65,13 +67,20 @@ public class SSRFService {
                         continue;
                     }
                     if (vulnerableIndex[callerIndex]) {
+                        tempChain.add(callGraph.getTargetMethod().getClassReference().getName() + "." +
+                                callGraph.getTargetMethod().getName());
                         // 防止循环
                         List<MethodReference.Handle> visited = new ArrayList<>();
                         doTask(callGraph.getTargetMethod(), callGraph.getTargetArgIndex(), visited);
                     }
                 }
+                tempChain.clear();
             }
         }
+    }
+
+    public static List<ResultInfo> getResults() {
+        return results;
     }
 
     private static void doTask(MethodReference.Handle targetMethod, int targetIndex,
@@ -90,6 +99,11 @@ public class SSRFService {
                     targetMethod, targetIndex, localInheritanceMap, localDataFlow);
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
             if (cv.getPass().size() == 3 && !cv.getPass().contains(false)) {
+                ResultInfo resultInfo = new ResultInfo();
+                resultInfo.setRisk(ResultInfo.MID_RISK);
+                resultInfo.setVulnName("SSRF");
+                resultInfo.getChains().addAll(tempChain);
+                results.add(resultInfo);
                 String message = targetMethod.getClassReference().getName() + "." + targetMethod.getName();
                 logger.info("detect ssrf: " + message);
             }
@@ -106,6 +120,8 @@ public class SSRFService {
                 if (visited.contains(callGraph.getTargetMethod())) {
                     return;
                 }
+                tempChain.add(callGraph.getTargetMethod().getClassReference().getName() + "." +
+                        callGraph.getTargetMethod().getName());
                 doTask(callGraph.getTargetMethod(), callGraph.getTargetArgIndex(), visited);
             }
         }

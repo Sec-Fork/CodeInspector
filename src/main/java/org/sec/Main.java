@@ -3,9 +3,9 @@ package org.sec;
 import com.beust.jcommander.JCommander;
 import org.sec.config.Command;
 import org.sec.config.Logo;
-import org.sec.core.InheritanceUtil;
 import org.sec.model.*;
 import org.sec.util.DataUtil;
+import org.sec.util.OutputUtil;
 import org.sec.util.RtUtil;
 import org.apache.log4j.Logger;
 import org.sec.core.CallGraph;
@@ -77,13 +77,17 @@ public class Main {
             jc.usage();
         }
         // 暂时只处理输入SpringBoot的Jar包情况
-        // 其实Tomcat的War包情况类似
+        // 其实Tomcat的War包情况类似暂不处理
         if (command.boots != null && command.boots.size() != 0) {
-            start(command.boots, command.packageName);
+            start(command);
         }
     }
 
-    private static void start(List<String> boots, String packageName) {
+    private static void start(Command command) {
+        List<String> boots = command.boots;
+        String packageName = command.packageName;
+        boolean draw = command.drawCallGraph;
+
         // 读取JDK和输入Jar所有class资源
         List<ClassFile> classFileList = RtUtil.getAllClassesFromBoot(boots, true);
         // 获取所有方法和类
@@ -109,10 +113,12 @@ public class Main {
                 classMap, dataFlow, graphCallMap, methodMap);
         // 保存到本地观察
         DataUtil.SaveCallGraphs(discoveredCalls);
-        // SSRF尝试检测
-        SSRFService.start(classFileByName, controllers, inheritanceMap,
-                dataFlow, graphCallMap, methodMap);
-        // 画出指定package的调用图
-        DrawService.start(discoveredCalls, finalPackageName, classMap);
+        // SSRF检测
+        SSRFService.start(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
+        List<ResultInfo> results = SSRFService.getResults();
+        OutputUtil.doOutput(results);
+        if (draw) {
+            DrawService.start(discoveredCalls, finalPackageName, classMap);
+        }
     }
 }
