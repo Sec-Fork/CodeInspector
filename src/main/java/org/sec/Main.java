@@ -128,7 +128,10 @@ public class Main {
         // SSRF检测
         SSRFService.start(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
         resultInfos.addAll(SSRFService.getResults());
-        //
+
+        XSSService.startReflection(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
+        resultInfos.addAll(XSSService.getResults());
+
         OutputUtil.doOutput(resultInfos);
         if (draw) {
             DrawService.start(discoveredCalls, finalPackageName, classMap);

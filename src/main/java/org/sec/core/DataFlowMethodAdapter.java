@@ -110,17 +110,6 @@ public class DataFlowMethodAdapter extends CoreMethodAdapter<Integer> {
                 } else {
                     resultTaint = new HashSet<>();
                 }
-                if(name.equals("reflection")){
-                    if(owner.contains("org/sec/cidemo")){
-                        Set<Integer> p = passthroughDataflow.get(
-                                new MethodReference.Handle(
-                                        new ClassReference.Handle("org/sec/cidemo/service/XSSService"),
-                                        "reflection", "(Ljava/lang/String;)Ljava/lang/String;"));
-                        if(p!=null){
-                            System.out.println(p);
-                        }
-                    }
-                }
                 Set<Integer> passthrough = passthroughDataflow.get(
                         new MethodReference.Handle(new ClassReference.Handle(owner), name, desc));
                 if (passthrough != null) {
