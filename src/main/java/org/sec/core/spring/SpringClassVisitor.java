@@ -1,7 +1,6 @@
-package org.sec.core;
+package org.sec.core.spring;
 
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.sec.model.ClassReference;

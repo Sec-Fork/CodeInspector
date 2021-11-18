@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.spring;
 
 public interface SpringConstant {
     String ControllerAnno = "Lorg/springframework/stereotype/Controller;";

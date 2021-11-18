@@ -1,9 +1,10 @@
-package org.sec.core;
+package org.sec.core.ssrf;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
+import org.sec.core.InheritanceMap;
 import org.sec.model.MethodReference;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("all")
-public class SSRFClassVisitor extends ClassVisitor {
+public class SimpleSSRFClassVisitor extends ClassVisitor {
     private final InheritanceMap inheritanceMap;
     private final Map<MethodReference.Handle, Set<Integer>> dataFlow;
 
@@ -25,9 +26,9 @@ public class SSRFClassVisitor extends ClassVisitor {
     private int methodArgIndex;
     private List<Boolean> pass;
 
-    public SSRFClassVisitor(MethodReference.Handle targetMethod,
-                            int targetIndex, InheritanceMap inheritanceMap,
-                            Map<MethodReference.Handle, Set<Integer>> dataFlow) {
+    public SimpleSSRFClassVisitor(MethodReference.Handle targetMethod,
+                                  int targetIndex, InheritanceMap inheritanceMap,
+                                  Map<MethodReference.Handle, Set<Integer>> dataFlow) {
         super(Opcodes.ASM6);
         this.inheritanceMap = inheritanceMap;
         this.dataFlow = dataFlow;
@@ -55,7 +56,7 @@ public class SSRFClassVisitor extends ClassVisitor {
                                      String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (name.equals(this.methodHandle.getName())) {
-            SSRFMethodAdapter ssrfMethodAdapter = new SSRFMethodAdapter(
+            SimpleSSRFMethodAdapter ssrfMethodAdapter = new SimpleSSRFMethodAdapter(
                     this.methodArgIndex, this.pass,
                     inheritanceMap, dataFlow, Opcodes.ASM6, mv,
                     this.name, access, name, descriptor, signature, exceptions

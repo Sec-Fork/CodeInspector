@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.spring;
 
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;

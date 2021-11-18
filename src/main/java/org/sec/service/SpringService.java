@@ -2,7 +2,7 @@ package org.sec.service;
 
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
-import org.sec.core.SpringClassVisitor;
+import org.sec.core.spring.SpringClassVisitor;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
 import org.sec.model.MethodReference;

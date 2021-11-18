@@ -36,8 +36,8 @@ JVM把操作数栈作为它的**工作区**——大多数指令都要从这里�
 
 ```text
 ---------------------------
-Vuln Name: SSRF
-Risk: High Level
+Vuln Name: JDK SSRF
+Risk: Middle Level
 Chains: 
 	org/sec/cidemo/web/SSRFController.ssrf1
 	org/sec/cidemo/service/SSRFService.ssrf1

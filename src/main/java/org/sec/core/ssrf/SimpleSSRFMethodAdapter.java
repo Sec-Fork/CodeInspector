@@ -1,24 +1,26 @@
-package org.sec.core;
+package org.sec.core.ssrf;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.sec.core.CoreMethodAdapter;
+import org.sec.core.InheritanceMap;
 import org.sec.model.MethodReference;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
+public class SimpleSSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
     private final int access;
     private final String desc;
     private final int methodArgIndex;
     private final List<Boolean> pass;
 
-    public SSRFMethodAdapter(int methodArgIndex, List<Boolean> pass, InheritanceMap inheritanceMap,
-                             Map<MethodReference.Handle, Set<Integer>> passthroughDataflow,
-                             int api, MethodVisitor mv, String owner, int access, String name,
-                             String desc, String signature, String[] exceptions) {
+    public SimpleSSRFMethodAdapter(int methodArgIndex, List<Boolean> pass, InheritanceMap inheritanceMap,
+                                   Map<MethodReference.Handle, Set<Integer>> passthroughDataflow,
+                                   int api, MethodVisitor mv, String owner, int access, String name,
+                                   String desc, String signature, String[] exceptions) {
         super(inheritanceMap, passthroughDataflow, api, mv, owner, access, name, desc, signature, exceptions);
         this.access = access;
         this.desc = desc;

@@ -14,16 +14,22 @@ import java.util.Set;
  */
 public class DataUtil {
     private static final String DataFlowFile = "dataflow.dat";
+    private static final String TargetDataFlowFile = "target-dataflow.dat";
     private static final String CallGraphFile = "callgraph.dat";
+    private static final String TargetCallGraphFile = "target-callgraph.dat";
 
     /**
      * 保存DataFlow
      * @param dataFlow dataFlow
      * @param methodMap methodMap
+     * @param packageName packageName
      */
+    @SuppressWarnings("all")
     public static void SaveDataFlows(Map<MethodReference.Handle, Set<Integer>> dataFlow,
-                                     Map<MethodReference.Handle, MethodReference> methodMap) {
+                                     Map<MethodReference.Handle, MethodReference> methodMap,
+                                     String packageName) {
         try {
+            // All DataFlow
             Path filePath = Paths.get(DataFlowFile);
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
@@ -46,6 +52,33 @@ public class DataUtil {
                 dataFlowStr.append("\n");
             }
             FileUtil.writeFile(DataFlowFile, dataFlowStr.toString());
+
+            // Target DataFlow
+            Path targetFilePath = Paths.get(TargetDataFlowFile);
+            if (Files.exists(targetFilePath)) {
+                Files.delete(targetFilePath);
+            }
+            StringBuilder targetDataFlowStr = new StringBuilder();
+            for (MethodReference.Handle handle : dataFlow.keySet()) {
+                String className = methodMap.get(handle).getClassReference().getName();
+                if (!className.contains(packageName)) {
+                    continue;
+                }
+                String methodName = handle.getName();
+                Set<Integer> results = dataFlow.get(handle);
+                if (results != null && results.size() != 0) {
+                    targetDataFlowStr.append("results:");
+                    for (Integer i : results) {
+                        targetDataFlowStr.append(i).append(" ");
+                    }
+                } else {
+                    continue;
+                }
+                targetDataFlowStr.append(className).append("\t");
+                targetDataFlowStr.append(methodName).append("\t");
+                targetDataFlowStr.append("\n");
+            }
+            FileUtil.writeFile(TargetDataFlowFile, targetDataFlowStr.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,9 +87,11 @@ public class DataUtil {
     /**
      * 保存CallGraph
      * @param discoveredCalls discoveredCalls
+     * @param packageName packageName
      */
-    public static void SaveCallGraphs(Set<CallGraph> discoveredCalls) {
+    public static void SaveCallGraphs(Set<CallGraph> discoveredCalls, String packageName) {
         try {
+            // All CallGraph
             Path filePath = Paths.get(CallGraphFile);
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
@@ -76,6 +111,29 @@ public class DataUtil {
                         .append("--------------------------------------------------------------------\n");
             }
             FileUtil.writeFile(CallGraphFile, callGraphStr.toString());
+            // Target CallGraph
+            Path targetFilePath = Paths.get(TargetCallGraphFile);
+            if (Files.exists(targetFilePath)) {
+                Files.delete(targetFilePath);
+            }
+            StringBuilder targetCallGraphStr = new StringBuilder();
+            for (CallGraph callGraph : discoveredCalls) {
+                String callerClass = callGraph.getCallerMethod().getClassReference().getName();
+                if (!callerClass.contains(packageName)) {
+                    continue;
+                }
+                String callerMethod = callGraph.getCallerMethod().getName();
+                Integer callerArgIndex = callGraph.getCallerArgIndex();
+                String targetClass = callGraph.getTargetMethod().getClassReference().getName();
+                String targetMethod = callGraph.getTargetMethod().getName();
+                Integer targetArgIndex = callGraph.getTargetArgIndex();
+                targetCallGraphStr.append("caller:").append(callerClass).append(".")
+                        .append(callerMethod).append("(").append(callerArgIndex).append(")")
+                        .append("\n").append("target:").append(targetClass).append(".")
+                        .append(targetMethod).append("(").append(targetArgIndex).append(")").append("\n")
+                        .append("--------------------------------------------------------------------\n");
+            }
+            FileUtil.writeFile(TargetCallGraphFile, targetCallGraphStr.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

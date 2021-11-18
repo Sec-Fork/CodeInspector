@@ -5,7 +5,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
 import org.sec.core.CallGraph;
 import org.sec.core.InheritanceMap;
-import org.sec.core.SSRFClassVisitor;
+import org.sec.core.ssrf.SimpleSSRFClassVisitor;
 import org.sec.model.*;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 尝试实现简单的SSRF扫描
+ * 原生SSRF扫描
  */
 public class SSRFService {
     private static final Logger logger = Logger.getLogger(SSRFService.class);
@@ -95,13 +95,13 @@ public class SSRFService {
             InputStream ins = file.getInputStream();
             ClassReader cr = new ClassReader(ins);
             ins.close();
-            SSRFClassVisitor cv = new SSRFClassVisitor(
+            SimpleSSRFClassVisitor cv = new SimpleSSRFClassVisitor(
                     targetMethod, targetIndex, localInheritanceMap, localDataFlow);
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
             if (cv.getPass().size() == 3 && !cv.getPass().contains(false)) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulnName("SSRF");
+                resultInfo.setVulnName("JDK SSRF");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
                 String message = targetMethod.getClassReference().getName() + "." + targetMethod.getName();

@@ -107,12 +107,12 @@ public class Main {
         List<MethodReference.Handle> sortedMethods = SortService.start(methodCalls);
         // 分析方法返回值与哪些参数有关
         DataFlowService.start(inheritanceMap, sortedMethods, classFileByName, classMap, dataFlow);
-        DataUtil.SaveDataFlows(dataFlow, methodMap);
+        DataUtil.SaveDataFlows(dataFlow, methodMap, finalPackageName);
         // 根据已有条件得到方法调用关系
         CallGraphService.start(inheritanceMap, discoveredCalls, sortedMethods, classFileByName,
                 classMap, dataFlow, graphCallMap, methodMap);
         // 保存到本地观察
-        DataUtil.SaveCallGraphs(discoveredCalls);
+        DataUtil.SaveCallGraphs(discoveredCalls, finalPackageName);
         // SSRF检测
         SSRFService.start(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
         List<ResultInfo> results = SSRFService.getResults();
