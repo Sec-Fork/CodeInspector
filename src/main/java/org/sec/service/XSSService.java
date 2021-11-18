@@ -29,11 +29,13 @@ public class XSSService {
     private static final List<String> tempChain = new ArrayList<>();
     private static final List<ResultInfo> results = new ArrayList<>();
 
+    private static boolean mayXSS;
+
     public static void startReflection(Map<String, ClassFile> classFileByName,
-                             List<SpringController> controllers,
-                             InheritanceMap inheritanceMap,
-                             Map<MethodReference.Handle, Set<Integer>> dataFlow,
-                             Map<MethodReference.Handle, Set<CallGraph>> discoveredCalls) {
+                                       List<SpringController> controllers,
+                                       InheritanceMap inheritanceMap,
+                                       Map<MethodReference.Handle, Set<Integer>> dataFlow,
+                                       Map<MethodReference.Handle, Set<CallGraph>> discoveredCalls) {
         allCalls = discoveredCalls;
         classFileMap = classFileByName;
         localInheritanceMap = inheritanceMap;
@@ -68,11 +70,28 @@ public class XSSService {
                         continue;
                     }
                     if (vulnerableIndex[callerIndex]) {
+                        Set<Integer> flows = dataFlow.get(methodReference.getHandle());
+                        if (flows != null && flows.size() != 0) {
+                            if (flows.contains(callerIndex)) {
+                                mayXSS = true;
+                            }
+                        }
                         tempChain.add(callGraph.getTargetMethod().getClassReference().getName() + "." +
                                 callGraph.getTargetMethod().getName());
                         // 防止循环
                         List<MethodReference.Handle> visited = new ArrayList<>();
                         doTask(callGraph.getTargetMethod(), callGraph.getTargetArgIndex(), visited);
+                        if (mayXSS) {
+                            ResultInfo resultInfo = new ResultInfo();
+                            resultInfo.setRisk(ResultInfo.LOW_RISK);
+                            resultInfo.setVulnName("Reflection XSS");
+                            resultInfo.getChains().addAll(tempChain);
+                            results.add(resultInfo);
+                            String message = callGraph.getTargetMethod().getClassReference().getName() + "." +
+                                    callGraph.getTargetMethod().getName();
+                            logger.info("detect reflection xss: " + message);
+                        }
+                        mayXSS = false;
                     }
                 }
                 tempChain.clear();
@@ -98,16 +117,10 @@ public class XSSService {
             ins.close();
             ReflectionXSSClassVisitor cv = new ReflectionXSSClassVisitor(
                     targetMethod, targetIndex, localInheritanceMap, localDataFlow);
-            if(cv.getEscape().contains(true)){
+            if (cv.getEscape().contains(true)) {
                 logger.info("no reflection xss because escape method");
-            }else{
-                ResultInfo resultInfo = new ResultInfo();
-                resultInfo.setRisk(ResultInfo.LOW_RISK);
-                resultInfo.setVulnName("Reflection XSS");
-                resultInfo.getChains().addAll(tempChain);
-                results.add(resultInfo);
-                String message = targetMethod.getClassReference().getName() + "." + targetMethod.getName();
-                logger.info("detect reflection xss: " + message);
+                mayXSS = false;
+                return;
             }
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
         } catch (IOException e) {
