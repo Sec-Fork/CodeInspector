@@ -132,6 +132,9 @@ public class Main {
         XSSService.startReflection(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
         resultInfos.addAll(XSSService.getResults());
 
+        XSSService.startStored(classFileByName, controllers, inheritanceMap, dataFlow, graphCallMap);
+        resultInfos.addAll(XSSService.getResults());
+
         OutputUtil.doOutput(resultInfos);
         if (draw) {
             DrawService.start(discoveredCalls, finalPackageName, classMap);

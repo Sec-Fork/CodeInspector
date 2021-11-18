@@ -18,6 +18,7 @@ import java.util.Set;
 /**
  * 原生SSRF扫描
  */
+@SuppressWarnings("all")
 public class SSRFService {
     private static final Logger logger = Logger.getLogger(SSRFService.class);
 

@@ -47,11 +47,55 @@ public class TestController {
 }
 ```
 
+### 反射XSS
+
+简单的反射XSS审计，判断根据为同时满足以下三点：
+
+1. 从Controller传入的String型参数认为是可控的
+2. 可控参数所能到达的任何地方都不存在实体编码的方法
+3. 数据流分析发现Controller层的方法返回值与可控参数相关
+
+检测结果如下
+
+```text
+Vuln Name: Reflection XSS
+Risk: Low Level
+Chains: 
+	org/sec/cidemo/web/XSSController.reflection
+	org/sec/cidemo/service/XSSService.reflection
+	org/sec/cidemo/service/impl/XSSServiceImpl.reflection
+	java/lang/String.equals
+```
+
+### 存储XSS（beta）
+
+简单的存储XSS审计，判断根据为同时满足以下三点：
+
+1. 从Controller传入的String型参数认为是可控的
+2. 可控参数所能到达的任何地方都不存在实体编码的方法（正在实现）
+3. 在完整的流程中存在数据库操作（这里只考虑了JdbcTemplate的情况）
+
+```text
+---------------------------
+Vuln Name: Stored XSS
+Risk: High Level
+Chains: 
+	org/sec/cidemo/web/XSSController.insertMessage
+	org/sec/cidemo/service/XSSService.insert
+	org/sec/cidemo/service/impl/XSSServiceImpl.insert
+	org/sec/cidemo/dao/XSSDao.insert
+	org/sec/cidemo/dao/impl/XSSDaoImpl.insert
+```
+
 ### SSRF
 
-目前仅尝试实现了一种简单的SSRF，可以做到参数可控性判断和数据流分析，判断根据为是否能匹配到JDK原生的`HttpURLConnection`请求
+基于JDK的SSRF，判断根据为同时满足以下三点：
 
-检测结果如下（输出漏洞信息和调用链）
+1. 从Controller传入的String型参数认为是可控的
+2. 可控参数所能到达的任何一处可以检测出JDK原生的`HttpURLConnection`请求过程
+3. 这个请求过程必须是有关联的，第一步的输出应该是第二步的输入
+
+检测结果如下
 
 ```text
 ---------------------------
