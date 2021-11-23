@@ -134,4 +134,6 @@ GadgetInspector大概原理分析：https://xz.aliyun.com/t/10363
 
 该项目实现SSRF的简单分析：https://xz.aliyun.com/t/10433
 
+进一步的原理分析：https://tttang.com/archive/1334/
+
 
