@@ -136,4 +136,6 @@ GadgetInspector大概原理分析：https://xz.aliyun.com/t/10363
 
 进一步的原理分析：https://tttang.com/archive/1334/
 
+## 进度
 
+该项目一定会长期维护，预计在2022年初出能用的版本
