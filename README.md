@@ -8,7 +8,7 @@
 
 简化并重写`GadgetInspector`实现一个针对于`SpringBoot`的**自动Java代码审计工具**
 
-由于一些特殊原因，目前只能在`Windows`下跑；最好使用`JDK8`，其他未测试
+由于一些特殊原因，目前只能在`Windows`下跑；最好使用`JDK8`，在`MAC/Linux`下由于系统文件`handle`限制会报错`Too Mang Open Files`
 
 最终目标：通过输入一个`SpringBoot`的`Jar`，直接生成漏洞报告，得到从可控参数的输入点到漏洞的触发点完整信息
 
